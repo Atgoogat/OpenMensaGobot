@@ -1,0 +1,400 @@
+[
+  {
+    "id": 15901063,
+    "name": "Scharfe Sombrero - Reispfanne mit Hackfleisch, Gemüse und Tomatensoße",
+    "category": "Linie 1 Gut \u0026 Günstig",
+    "prices": {
+      "students": 3.2,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["zu jedem Gericht reichen wir ein Dessert oder Salat"]
+  },
+  {
+    "id": 15901064,
+    "name": "Scharfe Sombrero - Reispfanne mit knusprigen Gemüse Crossini und Tomatensoße",
+    "category": "Linie 1 Gut \u0026 Günstig",
+    "prices": {
+      "students": 3.2,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["zu jedem Gericht reichen wir ein Dessert oder Salat"]
+  },
+  {
+    "id": 15901065,
+    "name": "Sellerieschnitzel mit",
+    "category": "Linie 2 Vegane Linie",
+    "prices": {
+      "students": 3.5,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": [
+      "zu jedem Gericht reichen wir frisches Obst oder Salat\nRatatouille und Ofenkartoffel"
+    ]
+  },
+  {
+    "id": 15901066,
+    "name": "Veganes Tagesdessert",
+    "category": "Linie 2 Vegane Linie",
+    "prices": {
+      "students": 1.05,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["zu jedem Gericht reichen wir frisches Obst oder Salat"]
+  },
+  {
+    "id": 15901067,
+    "name": "Spätzle-Pilz-Pfanne",
+    "category": "Linie 3",
+    "prices": {
+      "students": 2.95,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15901068,
+    "name": "Blattsalat",
+    "category": "Linie 3",
+    "prices": {
+      "students": 0.9,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["\nGurkensalat"]
+  },
+  {
+    "id": 15976171,
+    "name": "Creme Sahne - Karamellgeschmack",
+    "category": "Linie 3",
+    "prices": {
+      "students": 0.85,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15976173,
+    "name": "Vollkornpenne",
+    "category": "Linie 4",
+    "prices": {
+      "students": 3.5,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["\nin fruchtiger Tomatensoße mit Chorizo"]
+  },
+  {
+    "id": 15976172,
+    "name": "Vollkornpenne",
+    "category": "Linie 4",
+    "prices": {
+      "students": 3.5,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["\nin fruchtiger Tomatensoße mit Chorizo"]
+  },
+  {
+    "id": 15901070,
+    "name": "Blattsalat",
+    "category": "Linie 4",
+    "prices": {
+      "students": 0.9,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["\nGurkensalat"]
+  },
+  {
+    "id": 15976174,
+    "name": "Creme Sahne - Karamellgeschmack",
+    "category": "Linie 4",
+    "prices": {
+      "students": 0.85,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15901072,
+    "name": "Paniertes Alaska Seelachsfilet",
+    "category": "Linie 5",
+    "prices": {
+      "students": 3.95,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["\nmit Kräuterdip"]
+  },
+  {
+    "id": 15901073,
+    "name": "Blattsalat",
+    "category": "Linie 5",
+    "prices": {
+      "students": 0.9,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["\nGurkensalat"]
+  },
+  {
+    "id": 15976175,
+    "name": "Kaisergemüse",
+    "category": "Linie 5",
+    "prices": {
+      "students": 0.9,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15976176,
+    "name": "Creme Sahne - Karamellgeschmack",
+    "category": "Linie 5",
+    "prices": {
+      "students": 0.85,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15901076,
+    "name": "hausgemachter Kartoffelsalat",
+    "category": "Linie 5",
+    "prices": {
+      "students": 0.85,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15976177,
+    "name": "Linsensuppe",
+    "category": "Linie 5",
+    "prices": {
+      "students": 0.55,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15901078,
+    "name": "Schweine- und Hähnchenschnitzel, vegetarische Leckereien,",
+    "category": "Schnitzel-/Burgerbar",
+    "prices": {
+      "students": 1.05,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["\nSalatbuffet und Pommes - alles zur Wahl zu einem Preis"]
+  },
+  {
+    "id": 15976178,
+    "name": "Creme Sahne - Karamellgeschmack",
+    "category": "Schnitzel-/Burgerbar",
+    "prices": {
+      "students": 0.85,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15901080,
+    "name": "Verschiedene Desserts im Portionsbecher",
+    "category": "Schnitzel-/Burgerbar",
+    "prices": {
+      "students": 0.65,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15976434,
+    "name": "Heute Geschlossen",
+    "category": "Linie 6",
+    "prices": {
+      "students": 1.05,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15901083,
+    "name": "Spätausgabe 14:00 bis 14:30 an der Linie 2",
+    "category": "Spätausgabe und Abendessen",
+    "prices": {
+      "students": 3.2,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["\nInfo zum Speisenangebot direkt an der Ausgabe"]
+  },
+  {
+    "id": 15901084,
+    "name": "Reine Kalbsbratwurst mit Currysoße",
+    "category": "[kœri]werk 11-14 Uhr",
+    "prices": {
+      "students": 2.1,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["Zu jeder Currywurst reichen wir frisches Baguette"]
+  },
+  {
+    "id": 15901085,
+    "name": "Vegane Tofu - Bratwurst mit Currysoße",
+    "category": "[kœri]werk 11-14 Uhr",
+    "prices": {
+      "students": 2.1,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["Zu jeder Currywurst reichen wir frisches Baguette"]
+  },
+  {
+    "id": 15901086,
+    "name": "koerifrites",
+    "category": "[kœri]werk 11-14 Uhr",
+    "prices": {
+      "students": 1.3,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": ["Zu jeder Currywurst reichen wir frisches Baguette"]
+  },
+  {
+    "id": 15900180,
+    "name": "Hähnchenschnitzel mit Brötchen",
+    "category": "Cafeteria 11-14 Uhr",
+    "prices": {
+      "students": 2.8,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15900181,
+    "name": "Börek mit Spinatfüllung",
+    "category": "Cafeteria 11-14 Uhr",
+    "prices": {
+      "students": 2.0,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15949478,
+    "name": "Pizza alla bolognese - Pizza mit Rinderhackfleisch, Lauch und roten Zwiebeln",
+    "category": "[pizza]werk Pizza 11-14 Uhr",
+    "prices": {
+      "students": 4.55,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15949479,
+    "name": "Pizza Mykonos - Hirtenkäse, Paprika, Oliven, rote Zwiebeln und Mais",
+    "category": "[pizza]werk Pizza 11-14 Uhr",
+    "prices": {
+      "students": 4.45,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15949480,
+    "name": "Pizza Mykonos vegan - Paprika, Oliven, rote Zwiebeln, vegane Käsealternative und Mais",
+    "category": "[pizza]werk Pizza 11-14 Uhr",
+    "prices": {
+      "students": 4.45,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15949481,
+    "name": "Pizza Margherita vegetarisch - frische Tomaten, Mozzarella, Basilikumpesto",
+    "category": "[pizza]werk Pizza 11-14 Uhr",
+    "prices": {
+      "students": 4.05,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15949482,
+    "name": "Pizza Margherita vegan - frische Tomaten, vegane Käsealternative, Basilikumpesto",
+    "category": "[pizza]werk Pizza 11-14 Uhr",
+    "prices": {
+      "students": 4.05,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  },
+  {
+    "id": 15949483,
+    "name": "Insalata piccola - kleiner Blattsalat mit Tomate, Gurke und Ei",
+    "category": "[pizza]werk Salate / Vorspeisen",
+    "prices": {
+      "students": 1.8,
+      "employees": null,
+      "pupils": null,
+      "others": null
+    },
+    "notes": []
+  }
+]
