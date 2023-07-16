@@ -3,8 +3,8 @@ package db
 import (
 	"testing"
 
+	"github.com/glebarez/sqlite"
 	"github.com/stretchr/testify/assert"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -40,7 +40,7 @@ func TestCreateAndRetrieveSubscriber(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.Equal(t, id, sub.ID)
-	assert.Equal(t, 12, sub.ChatID)
+	assert.Equal(t, int64(12), sub.ChatID)
 	assert.Equal(t, 13, sub.MensaID)
 	assert.Equal(t, uint(10), sub.Push.Hours)
 	assert.Equal(t, uint(0), sub.Push.Minutes)
@@ -59,6 +59,6 @@ func TestCreateAndRetrieveByChatID(t *testing.T) {
 
 	sub, err := repo.FindSubscriberByChatID(123)
 	assert.Nil(t, err)
-	assert.Equal(t, 123, sub.ChatID)
+	assert.Equal(t, int64(123), sub.ChatID)
 	assert.Equal(t, 0, sub.MensaID)
 }
