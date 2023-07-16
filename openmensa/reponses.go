@@ -1,10 +1,13 @@
 package openmensa
 
+type PriceType string
+
 const (
-	PRICE_STUDENT   = "students"
-	PRICE_EMPLOYEES = "employees"
-	PRICE_PUPILS    = "pupils"
-	PRICE_OTHERS    = "others"
+	PRICE_STUDENT   PriceType = "students"
+	PRICE_EMPLOYEES PriceType = "employees"
+	PRICE_PUPILS    PriceType = "pupils"
+	PRICE_OTHERS    PriceType = "others"
+	PRICE_NONE      PriceType = "none"
 )
 
 type Canteen struct {
@@ -21,9 +24,9 @@ type CanteenDay struct {
 }
 
 type CanteenMeal struct {
-	Id       int                `json:"id"`
-	Name     string             `json:"name"`
-	Notes    []string           `json:"notes"`
-	Prices   map[string]float32 `json:"prices"`
-	Category string             `json:"category"`
+	Id       int                   `json:"id"`
+	Name     string                `json:"name"`
+	Notes    []string              `json:"notes"`
+	Prices   map[PriceType]float32 `json:"prices"`
+	Category string                `json:"category"`
 }
