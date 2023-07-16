@@ -15,7 +15,6 @@ const (
 )
 
 var (
-	ErrExpectedJsonResponse = errors.New("expected json response")
 	ErrExpectedStatusCodeOk = errors.New("expected status code ok (200)")
 )
 
@@ -40,8 +39,6 @@ func makeJsonRequest[T interface{}](client *http.Client, req *http.Request, data
 
 	if res.StatusCode != 200 {
 		return ErrExpectedStatusCodeOk
-	} else if res.Header.Get("Content-Type") != "application/json" {
-		return ErrExpectedJsonResponse
 	}
 
 	body, err := io.ReadAll(res.Body)

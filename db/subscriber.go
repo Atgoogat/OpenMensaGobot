@@ -41,3 +41,14 @@ func (repo SubscriberRepository) FindSubscriberById(id uint) (Subscriber, error)
 	result := repo.db.First(&sub, id)
 	return sub, result.Error
 }
+
+func (repo SubscriberRepository) FindSubscriberByChatID(chatId int) (Subscriber, error) {
+	var sub Subscriber
+	result := repo.db.First(&sub, "chat_id = ?", chatId)
+	return sub, result.Error
+}
+
+func (repo SubscriberRepository) DeleteSubscriberByID(id uint) error {
+	res := repo.db.Delete(&Subscriber{}, id)
+	return res.Error
+}

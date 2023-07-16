@@ -52,3 +52,13 @@ func TestInsertWrongTime(t *testing.T) {
 	_, err = repo.CreateSubscriber(0, 0, 0, 60)
 	assert.NotNil(t, err)
 }
+
+func TestCreateAndRetrieveByChatID(t *testing.T) {
+	_, err := repo.CreateSubscriber(123, 0, 0, 0)
+	assert.Nil(t, err)
+
+	sub, err := repo.FindSubscriberByChatID(123)
+	assert.Nil(t, err)
+	assert.Equal(t, 123, sub.ChatID)
+	assert.Equal(t, 0, sub.MensaID)
+}
