@@ -6,7 +6,7 @@ import (
 
 type Subscriber struct {
 	gorm.Model
-	ChatID  int `gorm:"<-:create"`
+	ChatID  int64 `gorm:"<-:create"`
 	MensaID int
 	Push    PushTime `gorm:"embedded"`
 }
@@ -26,7 +26,7 @@ func NewSubscriberRepository(db *gorm.DB) SubscriberRepository {
 	}
 }
 
-func (repo SubscriberRepository) CreateSubscriber(chatID, mensaID int, pushHour, pushMinutes uint) (Subscriber, error) {
+func (repo SubscriberRepository) CreateSubscriber(chatID int64, mensaID int, pushHour, pushMinutes uint) (Subscriber, error) {
 	sub := Subscriber{ChatID: chatID, MensaID: mensaID, Push: PushTime{
 		Hours:   pushHour,
 		Minutes: pushMinutes,
@@ -42,10 +42,22 @@ func (repo SubscriberRepository) FindSubscriberById(id uint) (Subscriber, error)
 	return sub, result.Error
 }
 
-func (repo SubscriberRepository) FindSubscriberByChatID(chatId int) (Subscriber, error) {
+func (repo SubscriberRepository) FindSubscriberByChatID(chatID int64) (Subscriber, error) {
 	var sub Subscriber
-	result := repo.db.First(&sub, "chat_id = ?", chatId)
+	result := repo.db.First(&sub, "chat_id = ?", chatID)
 	return sub, result.Error
+}
+
+func (repo SubscriberRepository) FindSubscriberByChatIDAndMensaID(chatID int64, mensaID int) (Subscriber, error) {
+	var sub Subscriber
+	result := repo.db.First(&sub, "chat_id = ? AND mensa_id = ?", chatID, mensaID)
+	return sub, result.Error
+}
+
+func (repo SubscriberRepository) ExistsSubscriberWithChatIDAndMensaID(chatID int64, mensaID int) (bool, error) {
+	var sub []Subscriber
+	result := repo.db.Find(&sub, "chat_id = ? AND mensa_id = ?", chatID, mensaID)
+	return result.RowsAffected > 0, result.Error
 }
 
 func (repo SubscriberRepository) DeleteSubscriberByID(id uint) error {

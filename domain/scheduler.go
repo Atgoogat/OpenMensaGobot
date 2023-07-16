@@ -20,15 +20,18 @@ type SubscriberScheduler struct {
 }
 
 func NewSubscriberScheduler(action SubscriberScheduleAction) *SubscriberScheduler {
+	scheduler := gocron.NewScheduler(time.Local)
+	scheduler.StartAsync()
+
 	return &SubscriberScheduler{
-		scheduler:     gocron.NewScheduler(time.Local),
+		scheduler:     scheduler,
 		scheduledJobs: make(map[uint]*gocron.Job),
 		action:        action,
 	}
 }
 
 func (scheduler *SubscriberScheduler) InsertJob(subscriber db.Subscriber) error {
-	time := fmt.Sprintf("%2d:%2d", subscriber.Push.Hours, subscriber.Push.Minutes)
+	time := fmt.Sprintf("%02d:%02d", subscriber.Push.Hours, subscriber.Push.Minutes)
 	id := subscriber.ID
 	job, err := scheduler.scheduler.Every(1).Day().At(time).Do(func() {
 		if scheduler.action != nil {
