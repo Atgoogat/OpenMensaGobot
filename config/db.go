@@ -2,30 +2,43 @@ package config
 
 import (
 	"log"
-	"os"
+	"sync"
 
 	"github.com/Atgoogat/openmensarobot/db"
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
 
-func NewDatabaseConnection() *gorm.DB {
-	url, ok := os.LookupEnv(DB_URL)
-	if !ok {
-		log.Fatalf("Env var %s is not defined", DB_URL)
-	}
+var (
+	dbConnection     *gorm.DB
+	dbConnectionOnce sync.Once
+)
 
-	gormDb, err := gorm.Open(sqlite.Open(url), &gorm.Config{})
-	if err != nil {
-		panic(err)
-	}
-	log.Printf("Connected to database: %s\n", url)
-	log.Println("Attempting migration")
-	err = db.Migrate(gormDb)
-	if err != nil {
-		panic(err)
-	}
-	log.Println("Migration complete")
+func NewDatabaseConnection() (*gorm.DB, error) {
+	var e error
+	dbConnectionOnce.Do(func() {
+		log.Println("connecting to database")
+		url, err := Getenv(DB_URL)
+		if err != nil {
+			e = err
+			return
+		}
 
-	return gormDb
+		gormDb, err := gorm.Open(sqlite.Open(url), &gorm.Config{})
+		if err != nil {
+			e = err
+			return
+		}
+		log.Printf("connected to database: %s", url)
+		log.Println("attempting migration")
+		err = db.Migrate(gormDb)
+		if err != nil {
+			e = err
+			return
+		}
+		log.Println("migration complete")
+		dbConnection = gormDb
+	})
+
+	return dbConnection, e
 }

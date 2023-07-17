@@ -19,15 +19,18 @@ type SubscriberScheduler struct {
 	action        SubscriberScheduleAction
 }
 
-func NewSubscriberScheduler(action SubscriberScheduleAction) *SubscriberScheduler {
+func NewSubscriberScheduler() *SubscriberScheduler {
 	scheduler := gocron.NewScheduler(time.Local)
 	scheduler.StartAsync()
 
 	return &SubscriberScheduler{
 		scheduler:     scheduler,
 		scheduledJobs: make(map[uint]*gocron.Job),
-		action:        action,
 	}
+}
+
+func (scheduler *SubscriberScheduler) SetAction(action SubscriberScheduleAction) {
+	scheduler.action = action
 }
 
 func (scheduler *SubscriberScheduler) InsertJob(subscriber db.Subscriber) error {

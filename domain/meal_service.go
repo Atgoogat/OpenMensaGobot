@@ -1,13 +1,46 @@
 package domain
 
 import (
+	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/Atgoogat/openmensarobot/openmensa"
 )
 
-func MealsToMsg(meals []openmensa.CanteenMeal, priceType openmensa.PriceType) string {
+const (
+	MealLimitPerMessage = 20
+)
+
+var (
+	ErrCouldNotFetch = errors.New("could not fetch meals from openmensa api")
+)
+
+type MealService struct {
+	openmensaApi *openmensa.OpenmensaApi
+}
+
+func NewMealService(openmensaApi *openmensa.OpenmensaApi) MealService {
+	return MealService{
+		openmensaApi: openmensaApi,
+	}
+}
+
+type TextFormatter interface {
+	Format(text string) (string, error)
+}
+
+func (s MealService) GetFormatedMeals(mensaID int, date time.Time, priceType openmensa.PriceType) (string, error) {
+	meals, err := s.openmensaApi.ListMealsForADay(mensaID, date, 1, MealLimitPerMessage)
+	if err != nil {
+		return "", errors.Join(ErrCouldNotFetch, err)
+	}
+
+	return mealsToMsg(meals, priceType), nil
+}
+
+func mealsToMsg(meals []openmensa.CanteenMeal, priceType openmensa.PriceType) string {
 	categories := make(map[string][]openmensa.CanteenMeal)
 	for _, m := range meals {
 		categories[m.Category] = append(categories[m.Category], m)

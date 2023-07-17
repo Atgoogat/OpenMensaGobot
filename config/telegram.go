@@ -2,21 +2,33 @@ package config
 
 import (
 	"log"
-	"os"
+	"sync"
 
 	"github.com/Atgoogat/openmensarobot/telegrambotapi"
 )
 
-func NewTelegramBotApi() *telegrambotapi.TelegramBotApi {
-	token, ok := os.LookupEnv(TELEGRAM_TOKEN)
-	if !ok {
-		log.Fatalf("Env var %s not found", TELEGRAM_TOKEN)
-	}
+var (
+	telegramApi     *telegrambotapi.TelegramBotApi
+	telegramApiOnce sync.Once
+)
 
-	api, err := telegrambotapi.NewTelegramBotApi(token)
-	if err != nil {
-		log.Fatalf("error while setting up telegram api: %v\n", err)
-	}
-	log.Println("connected to telegram api")
-	return api
+func NewTelegramBotApi() (*telegrambotapi.TelegramBotApi, error) {
+	var e error
+	telegramApiOnce.Do(func() {
+		log.Println("connecting to telegram api")
+		token, err := Getenv(TELEGRAM_TOKEN)
+		if err != nil {
+			e = err
+			return
+		}
+
+		api, err := telegrambotapi.NewTelegramBotApi(token)
+		if err != nil {
+			e = err
+			return
+		}
+		log.Println("connected to telegram api")
+		telegramApi = api
+	})
+	return telegramApi, e
 }

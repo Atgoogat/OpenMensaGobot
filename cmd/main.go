@@ -8,9 +8,7 @@ import (
 	"syscall"
 
 	"github.com/Atgoogat/openmensarobot/config"
-	"github.com/Atgoogat/openmensarobot/db"
-	"github.com/Atgoogat/openmensarobot/domain"
-	"github.com/Atgoogat/openmensarobot/openmensa"
+	"github.com/Atgoogat/openmensarobot/inject"
 )
 
 func main() {
@@ -19,13 +17,10 @@ func main() {
 		log.Printf("no .env loaded: %v\n", err)
 	}
 
-	databaseConnection := config.NewDatabaseConnection()
-	repo := db.NewSubscriberRepository(databaseConnection)
-	tapi := config.NewTelegramBotApi()
-
-	api := domain.NewApi(
-		openmensa.NewOpenmensaApi(openmensa.OPENMENSA_API_ENDPOINT),
-		repo, tapi)
+	msgService, err := inject.InitMsgService()
+	if err != nil {
+		log.Fatalf("error while creating msg service: %v", err)
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -34,11 +29,13 @@ func main() {
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		err := <-api.Start(ctx)
+		err := <-msgService.StartReceivingMessages(ctx)
 		if err != nil {
 			log.Println(err)
 		}
 	}()
+
+	log.Println("started ...")
 
 	<-signals
 

@@ -36,7 +36,7 @@ var meals = []openmensa.CanteenMeal{
 }
 
 func TestFormatSingleMsg(t *testing.T) {
-	msg := MealsToMsg(meals[:1], openmensa.PRICE_STUDENT)
+	msg := mealsToMsg(meals[:1], openmensa.PRICE_STUDENT)
 
 	assert.Equal(t, `Linie 1
 
@@ -47,7 +47,7 @@ Reis
 }
 
 func TestFormatMultiMsg(t *testing.T) {
-	msg := MealsToMsg(meals, openmensa.PRICE_STUDENT)
+	msg := mealsToMsg(meals, openmensa.PRICE_STUDENT)
 
 	assert.Equal(t, `Linie 1
 
