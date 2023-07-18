@@ -42,7 +42,9 @@ func (cs CliService) ParseAndExecuteCommand(msg telegrambotapi.TelegramMessage) 
 		return "", ErrInputTooLong
 	}
 
-	if strings.HasPrefix(msg.Text, "/sub") {
+	if msg.Text == "/start" {
+		return "Hello and welcome! Try /help ;)", nil
+	} else if strings.HasPrefix(msg.Text, "/sub") {
 		return cs.parseAndExecuteSub(msg)
 	} else if msg.Text == "/unsuball" {
 		return cs.parseAndExecuteUnsubAll(msg)

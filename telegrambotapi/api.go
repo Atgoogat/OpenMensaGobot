@@ -7,6 +7,10 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
+const (
+	DESCRIPTION = "This bot can send you menus from openmensa.org. Look at their site and copy the mensaID from the url."
+)
+
 type TelegramBotApi struct {
 	api            *tgbotapi.BotAPI
 	messageChannel chan TelegramMessage
@@ -38,6 +42,13 @@ func (api TelegramBotApi) GetMessageChan() <-chan TelegramMessage {
 				msg := update.Message
 				if msg != nil && msg.IsCommand() {
 					text := strings.Trim(msg.Text, " ")
+					if text == "/help" {
+						err := api.sendHelpMsg(msg.Chat.ID)
+						if err != nil {
+							log.Printf("error sending help message: %v", err)
+						}
+						return
+					}
 					tmsg := TelegramMessage{
 						ChatID: msg.Chat.ID,
 						Text:   text,
@@ -58,4 +69,17 @@ func (api TelegramBotApi) SendHtmlMessage(chatID int64, text string) error {
 		log.Printf("errors sending message to %d: %v", chatID, err)
 	}
 	return err
+}
+
+func (api TelegramBotApi) sendHelpMsg(chatID int64) error {
+	cmds, err := api.api.GetMyCommands()
+	if err != nil {
+		return err
+	}
+
+	msg := []string{DESCRIPTION, ""}
+	for _, cmd := range cmds {
+		msg = append(msg, cmd.Command+" - "+cmd.Description)
+	}
+	return api.SendHtmlMessage(chatID, strings.Join(msg, "\n"))
 }
