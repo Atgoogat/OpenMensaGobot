@@ -32,9 +32,10 @@ var serviceSet = wire.NewSet(
 	InitTelegramApi,
 	config.GetOpenmensaApi,
 	config.GetSubscriberScheduler,
-	config.GetMealService,
 
+	config.GetTextFormatter,
 	db.NewSubscriberRepository,
+	domain.NewMealService,
 	domain.NewCliService,
 	domain.NewMsgService,
 	domain.NewSubscriberService,

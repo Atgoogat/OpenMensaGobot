@@ -46,7 +46,8 @@ func InitMsgService() (domain.MsgService, error) {
 	subscriberScheduler := config.GetSubscriberScheduler()
 	subscriberService := domain.NewSubscriberService(subscriberRepository, subscriberScheduler)
 	openmensaApi := config.GetOpenmensaApi()
-	mealService := config.GetMealService(openmensaApi)
+	v := config.GetTextFormatter()
+	mealService := domain.NewMealService(openmensaApi, v...)
 	cliService := domain.NewCliService(subscriberService, mealService)
 	msgService := domain.NewMsgService(telegramBotApi, cliService)
 	return msgService, nil
@@ -65,7 +66,8 @@ func InitPushService() (domain.PushService, error) {
 		return domain.PushService{}, err
 	}
 	openmensaApi := config.GetOpenmensaApi()
-	mealService := config.GetMealService(openmensaApi)
+	v := config.GetTextFormatter()
+	mealService := domain.NewMealService(openmensaApi, v...)
 	pushService := domain.NewPushService(subscriberService, telegramBotApi, mealService)
 	return pushService, nil
 }
@@ -80,5 +82,5 @@ func InitScheduler() (*domain.SubscriberScheduler, error) {
 var serviceSet = wire.NewSet(
 
 	InitDatabaseConnection,
-	InitTelegramApi, config.GetOpenmensaApi, config.GetSubscriberScheduler, config.GetMealService, db.NewSubscriberRepository, domain.NewCliService, domain.NewMsgService, domain.NewSubscriberService, domain.NewPushService,
+	InitTelegramApi, config.GetOpenmensaApi, config.GetSubscriberScheduler, config.GetTextFormatter, db.NewSubscriberRepository, domain.NewMealService, domain.NewCliService, domain.NewMsgService, domain.NewSubscriberService, domain.NewPushService,
 )

@@ -10,10 +10,10 @@ import (
 type PushService struct {
 	subscriberService SubscriberService
 	telegramApi       *telegrambotapi.TelegramBotApi
-	mealService       *MealService
+	mealService       MealService
 }
 
-func NewPushService(subscriberService SubscriberService, telegramApi *telegrambotapi.TelegramBotApi, mealService *MealService) PushService {
+func NewPushService(subscriberService SubscriberService, telegramApi *telegrambotapi.TelegramBotApi, mealService MealService) PushService {
 	return PushService{
 		subscriberService: subscriberService,
 		telegramApi:       telegramApi,

@@ -3,6 +3,7 @@ package domain
 import (
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -22,18 +23,15 @@ type MealService struct {
 	formatter    []TextFormatter
 }
 
-func NewMealService(openmensaApi openmensa.OpenmensaApi) *MealService {
-	return &MealService{
+func NewMealService(openmensaApi openmensa.OpenmensaApi, formatter ...TextFormatter) MealService {
+	return MealService{
 		openmensaApi: openmensaApi,
+		formatter:    formatter,
 	}
 }
 
 type TextFormatter interface {
 	Format(text string) (string, error)
-}
-
-func (s *MealService) SetFormater(formatter ...TextFormatter) {
-	s.formatter = formatter
 }
 
 func (s MealService) GetFormatedMeals(mensaID int, date time.Time, priceType openmensa.PriceType) (string, error) {
@@ -42,7 +40,20 @@ func (s MealService) GetFormatedMeals(mensaID int, date time.Time, priceType ope
 		return "", errors.Join(ErrCouldNotFetch, err)
 	}
 
-	return mealsToMsg(meals, priceType), nil
+	t := mealsToMsg(meals, priceType)
+	return s.applyFormatterChain(t), nil
+}
+
+func (s MealService) applyFormatterChain(text string) string {
+	for _, f := range s.formatter {
+		newText, err := f.Format(text)
+		if err != nil {
+			log.Printf("error while applying formatter: %v", err)
+		} else {
+			text = newText
+		}
+	}
+	return text
 }
 
 func mealsToMsg(meals []openmensa.CanteenMeal, priceType openmensa.PriceType) string {

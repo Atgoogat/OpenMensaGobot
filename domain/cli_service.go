@@ -3,6 +3,7 @@ package domain
 import (
 	"errors"
 	"fmt"
+	"log"
 	"regexp"
 	"strings"
 	"time"
@@ -26,10 +27,10 @@ const (
 
 type CliService struct {
 	subscriberService SubscriberService
-	mealService       *MealService
+	mealService       MealService
 }
 
-func NewCliService(subscriberService SubscriberService, mealService *MealService) CliService {
+func NewCliService(subscriberService SubscriberService, mealService MealService) CliService {
 	return CliService{
 		subscriberService: subscriberService,
 		mealService:       mealService,
@@ -94,5 +95,6 @@ func (cs CliService) parseAndExecuteToday(msg telegrambotapi.TelegramMessage) (s
 		return "", errors.Join(ErrTodayUnexpectedFormat, err)
 	}
 
+	log.Printf("requested mensa today %d %d", msg.ChatID, mensaID)
 	return cs.mealService.GetFormatedMeals(mensaID, time.Now(), openmensa.PRICE_NONE)
 }
