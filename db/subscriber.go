@@ -105,3 +105,9 @@ func (repo SubscriberRepository) DeleteSubscriberByChatID(chatID int64) error {
 	res := repo.db.Where("chat_id = ?", chatID).Delete(&Subscriber{})
 	return res.Error
 }
+
+func (repo SubscriberRepository) FindAllSubscriber() ([]Subscriber, error) {
+	var subs []Subscriber
+	res := repo.db.Find(&subs)
+	return subs, res.Error
+}

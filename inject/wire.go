@@ -56,3 +56,7 @@ func InitScheduler() (*domain.SubscriberScheduler, error) {
 	wire.Build(serviceSet)
 	return nil, nil
 }
+
+func InitSubscriberService() (domain.SubscriberService, error) {
+	panic(wire.Build(serviceSet))
+}

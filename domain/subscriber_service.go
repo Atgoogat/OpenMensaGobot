@@ -69,3 +69,23 @@ func (ss SubscriberService) UnsubscribeChat(chatID int64) error {
 	}
 	return nil
 }
+
+func (ss SubscriberService) ScheduleAllSubcriber() error {
+	log.Println("schedule all subscribers")
+	subscriber, err := ss.repo.FindAllSubscriber()
+	if err != nil {
+		return errors.Join(ErrCouldNotFetch, err)
+	}
+
+	count := 0
+	for _, sub := range subscriber {
+		err = ss.scheduler.InsertJob(sub)
+		if err != nil {
+			log.Printf("could not schedule subscriber %#v: %v", sub, err)
+		} else {
+			count += 1
+		}
+	}
+	log.Printf("scheduled %d out of %d subscriber", count, len(subscriber))
+	return nil
+}

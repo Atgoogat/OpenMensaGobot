@@ -77,6 +77,17 @@ func InitScheduler() (*domain.SubscriberScheduler, error) {
 	return subscriberScheduler, nil
 }
 
+func InitSubscriberService() (domain.SubscriberService, error) {
+	gormDB, err := InitDatabaseConnection()
+	if err != nil {
+		return domain.SubscriberService{}, err
+	}
+	subscriberRepository := db.NewSubscriberRepository(gormDB)
+	subscriberScheduler := config.GetSubscriberScheduler()
+	subscriberService := domain.NewSubscriberService(subscriberRepository, subscriberScheduler)
+	return subscriberService, nil
+}
+
 // wire.go:
 
 var serviceSet = wire.NewSet(

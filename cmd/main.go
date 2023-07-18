@@ -22,9 +22,11 @@ func main() {
 		log.Fatalf("error while creating msg service: %v", err)
 	}
 
+	subscriberService, _ := inject.InitSubscriberService()
 	pushService, _ := inject.InitPushService()
 	scheduler, _ := inject.InitScheduler()
 	scheduler.SetAction(pushService.SendPushUpdate)
+	subscriberService.ScheduleAllSubcriber()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
