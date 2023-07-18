@@ -18,7 +18,7 @@ import (
 // Injectors from wire.go:
 
 func InitDatabaseConnection() (*gorm.DB, error) {
-	db, err := config.NewDatabaseConnection()
+	db, err := config.GetDatabaseConnection()
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func InitDatabaseConnection() (*gorm.DB, error) {
 }
 
 func InitTelegramApi() (*telegrambotapi.TelegramBotApi, error) {
-	telegramBotApi, err := config.NewTelegramBotApi()
+	telegramBotApi, err := config.GetTelegramBotApi()
 	if err != nil {
 		return nil, err
 	}
@@ -43,16 +43,42 @@ func InitMsgService() (domain.MsgService, error) {
 		return domain.MsgService{}, err
 	}
 	subscriberRepository := db.NewSubscriberRepository(gormDB)
-	subscriberScheduler := domain.NewSubscriberScheduler()
+	subscriberScheduler := config.GetSubscriberScheduler()
 	subscriberService := domain.NewSubscriberService(subscriberRepository, subscriberScheduler)
-	cliService := domain.NewCliService(subscriberService)
+	openmensaApi := config.GetOpenmensaApi()
+	mealService := config.GetMealService(openmensaApi)
+	cliService := domain.NewCliService(subscriberService, mealService)
 	msgService := domain.NewMsgService(telegramBotApi, cliService)
 	return msgService, nil
+}
+
+func InitPushService() (domain.PushService, error) {
+	gormDB, err := InitDatabaseConnection()
+	if err != nil {
+		return domain.PushService{}, err
+	}
+	subscriberRepository := db.NewSubscriberRepository(gormDB)
+	subscriberScheduler := config.GetSubscriberScheduler()
+	subscriberService := domain.NewSubscriberService(subscriberRepository, subscriberScheduler)
+	telegramBotApi, err := InitTelegramApi()
+	if err != nil {
+		return domain.PushService{}, err
+	}
+	openmensaApi := config.GetOpenmensaApi()
+	mealService := config.GetMealService(openmensaApi)
+	pushService := domain.NewPushService(subscriberService, telegramBotApi, mealService)
+	return pushService, nil
+}
+
+func InitScheduler() (*domain.SubscriberScheduler, error) {
+	subscriberScheduler := config.GetSubscriberScheduler()
+	return subscriberScheduler, nil
 }
 
 // wire.go:
 
 var serviceSet = wire.NewSet(
+
 	InitDatabaseConnection,
-	InitTelegramApi, db.NewSubscriberRepository, domain.NewCliService, domain.NewMealService, domain.NewMsgService, domain.NewSubscriberScheduler, domain.NewSubscriberService,
+	InitTelegramApi, config.GetOpenmensaApi, config.GetSubscriberScheduler, config.GetMealService, db.NewSubscriberRepository, domain.NewCliService, domain.NewMsgService, domain.NewSubscriberService, domain.NewPushService,
 )

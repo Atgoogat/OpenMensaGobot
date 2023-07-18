@@ -9,13 +9,13 @@ import (
 
 type MsgService struct {
 	telegrambotapi *telegrambotapi.TelegramBotApi
-	cs             CliService
+	cliService     CliService
 }
 
 func NewMsgService(telegrambotapi *telegrambotapi.TelegramBotApi, cs CliService) MsgService {
 	return MsgService{
 		telegrambotapi: telegrambotapi,
-		cs:             cs,
+		cliService:     cs,
 	}
 }
 
@@ -32,7 +32,7 @@ func (ms MsgService) StartReceivingMessages(ctx context.Context) <-chan error {
 				err := ms.handleMessage(m)
 				if err != nil {
 					log.Printf("error while handling message (%#v) err (%v)", m, err)
-					ms.telegrambotapi.SendMessage(m.ChatID, err.Error())
+					ms.telegrambotapi.SendHtmlMessage(m.ChatID, err.Error())
 				}
 			case <-ctx.Done():
 				running = false
@@ -44,9 +44,9 @@ func (ms MsgService) StartReceivingMessages(ctx context.Context) <-chan error {
 }
 
 func (ms MsgService) handleMessage(msg telegrambotapi.TelegramMessage) error {
-	text, err := ms.cs.ParseAndExecuteCommand(msg)
+	text, err := ms.cliService.ParseAndExecuteCommand(msg)
 	if err != nil {
 		return err
 	}
-	return ms.telegrambotapi.SendMessage(msg.ChatID, text)
+	return ms.telegrambotapi.SendHtmlMessage(msg.ChatID, text)
 }

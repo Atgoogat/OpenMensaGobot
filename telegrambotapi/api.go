@@ -14,7 +14,7 @@ type TelegramBotApi struct {
 
 type TelegramMessage struct {
 	ChatID int64
-	// Text is trimmed and lower case
+	// Text is trimmed
 	Text string
 }
 
@@ -38,7 +38,6 @@ func (api TelegramBotApi) GetMessageChan() <-chan TelegramMessage {
 				msg := update.Message
 				if msg != nil && msg.IsCommand() {
 					text := strings.Trim(msg.Text, " ")
-					text = strings.ToLower(text)
 					tmsg := TelegramMessage{
 						ChatID: msg.Chat.ID,
 						Text:   text,
@@ -51,8 +50,9 @@ func (api TelegramBotApi) GetMessageChan() <-chan TelegramMessage {
 	return api.messageChannel
 }
 
-func (api TelegramBotApi) SendMessage(chatID int64, text string) error {
+func (api TelegramBotApi) SendHtmlMessage(chatID int64, text string) error {
 	msg := tgbotapi.NewMessage(chatID, text)
+	msg.ParseMode = "html"
 	_, err := api.api.Send(msg)
 	if err != nil {
 		log.Printf("errors sending message to %d: %v", chatID, err)

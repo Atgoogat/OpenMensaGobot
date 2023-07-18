@@ -15,29 +15,43 @@ import (
 // external resources
 
 func InitDatabaseConnection() (*gorm.DB, error) {
-	wire.Build(config.NewDatabaseConnection)
+	wire.Build(config.GetDatabaseConnection)
 	return nil, nil
 }
 
 func InitTelegramApi() (*telegrambotapi.TelegramBotApi, error) {
-	wire.Build(config.NewTelegramBotApi)
+	wire.Build(config.GetTelegramBotApi)
 	return nil, nil
 }
 
 // services
 
 var serviceSet = wire.NewSet(
+	// singletons
 	InitDatabaseConnection,
 	InitTelegramApi,
+	config.GetOpenmensaApi,
+	config.GetSubscriberScheduler,
+	config.GetMealService,
+
 	db.NewSubscriberRepository,
 	domain.NewCliService,
-	domain.NewMealService,
 	domain.NewMsgService,
-	domain.NewSubscriberScheduler,
 	domain.NewSubscriberService,
+	domain.NewPushService,
 )
 
 func InitMsgService() (domain.MsgService, error) {
 	wire.Build(serviceSet)
 	return domain.MsgService{}, nil
+}
+
+func InitPushService() (domain.PushService, error) {
+	wire.Build(serviceSet)
+	return domain.PushService{}, nil
+}
+
+func InitScheduler() (*domain.SubscriberScheduler, error) {
+	wire.Build(serviceSet)
+	return nil, nil
 }

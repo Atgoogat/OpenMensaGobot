@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/Atgoogat/openmensarobot/openmensa"
 	"github.com/Atgoogat/openmensarobot/telegrambotapi"
@@ -14,9 +15,9 @@ var (
 	ErrInputTooLong      = errors.New("input text is too long")
 	ErrCommandNotDefined = errors.New("this command is not defined")
 
-	ErrSubUnexpectedFormat = errors.New("unexpected argument format. Example: /sub 1719 09:00 students")
-
+	ErrSubUnexpectedFormat      = errors.New("unexpected argument format. Example: /sub 1719 09:00 students")
 	ErrUnsubAllUnexpectedFormat = errors.New("unexpected argument format. Example: /unsuball")
+	ErrTodayUnexpectedFormat    = errors.New("unexpected argument format. Example: /today 1719")
 )
 
 const (
@@ -24,12 +25,14 @@ const (
 )
 
 type CliService struct {
-	ss SubscriberService
+	subscriberService SubscriberService
+	mealService       *MealService
 }
 
-func NewCliService(ss SubscriberService) CliService {
+func NewCliService(subscriberService SubscriberService, mealService *MealService) CliService {
 	return CliService{
-		ss: ss,
+		subscriberService: subscriberService,
+		mealService:       mealService,
 	}
 }
 
@@ -42,6 +45,8 @@ func (cs CliService) ParseAndExecuteCommand(msg telegrambotapi.TelegramMessage) 
 		return cs.parseAndExecuteSub(msg)
 	} else if msg.Text == "/unsuball" {
 		return cs.parseAndExecuteUnsubAll(msg)
+	} else if strings.HasPrefix(msg.Text, "/today") {
+		return cs.parseAndExecuteToday(msg)
 	}
 	return "", ErrCommandNotDefined
 }
@@ -60,10 +65,10 @@ func (cs CliService) parseAndExecuteSub(msg telegrambotapi.TelegramMessage) (str
 
 	n, err := fmt.Sscanf(msg.Text, "/sub %d %d:%d %s", &mensaID, &pushHours, &pushMinutes, &price)
 	if n != 4 || err != nil {
-		return "", ErrSubUnexpectedFormat
+		return "", errors.Join(ErrSubUnexpectedFormat, err)
 	}
 
-	sub, err := cs.ss.Subscribe(msg.ChatID, mensaID, pushHours, pushMinutes, price)
+	sub, err := cs.subscriberService.Subscribe(msg.ChatID, mensaID, pushHours, pushMinutes, price)
 	if err != nil {
 		return "", err
 	}
@@ -71,6 +76,23 @@ func (cs CliService) parseAndExecuteSub(msg telegrambotapi.TelegramMessage) (str
 }
 
 func (cs CliService) parseAndExecuteUnsubAll(msg telegrambotapi.TelegramMessage) (string, error) {
-	err := cs.ss.UnsubscribeChat(msg.ChatID)
+	err := cs.subscriberService.UnsubscribeChat(msg.ChatID)
 	return "everything unsubscribed", err
+}
+
+var todayRegex = regexp.MustCompile(`^/today \d{1,10}$`)
+
+// Parse format: /today [mensaID]
+func (cs CliService) parseAndExecuteToday(msg telegrambotapi.TelegramMessage) (string, error) {
+	if !todayRegex.MatchString(msg.Text) {
+		return "", ErrTodayUnexpectedFormat
+	}
+
+	var mensaID int
+	n, err := fmt.Sscanf(msg.Text, "/today %d", &mensaID)
+	if n != 1 || err != nil {
+		return "", errors.Join(ErrTodayUnexpectedFormat, err)
+	}
+
+	return cs.mealService.GetFormatedMeals(mensaID, time.Now(), openmensa.PRICE_NONE)
 }

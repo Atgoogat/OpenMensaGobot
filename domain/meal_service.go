@@ -18,17 +18,22 @@ var (
 )
 
 type MealService struct {
-	openmensaApi *openmensa.OpenmensaApi
+	openmensaApi openmensa.OpenmensaApi
+	formatter    []TextFormatter
 }
 
-func NewMealService(openmensaApi *openmensa.OpenmensaApi) MealService {
-	return MealService{
+func NewMealService(openmensaApi openmensa.OpenmensaApi) *MealService {
+	return &MealService{
 		openmensaApi: openmensaApi,
 	}
 }
 
 type TextFormatter interface {
 	Format(text string) (string, error)
+}
+
+func (s *MealService) SetFormater(formatter ...TextFormatter) {
+	s.formatter = formatter
 }
 
 func (s MealService) GetFormatedMeals(mensaID int, date time.Time, priceType openmensa.PriceType) (string, error) {
@@ -57,12 +62,17 @@ func mealsToMsg(meals []openmensa.CanteenMeal, priceType openmensa.PriceType) st
 			meals := categories[category]
 
 			var catMsg []string
-			catMsg = append(catMsg, category)
+			catMsg = append(catMsg, "<b>"+category+"</b>")
 
 			for _, m := range meals {
 				catMsg = append(catMsg, "", m.Name)
+				var filteredNotes []string
+				for _, note := range m.Notes {
+					note = strings.Trim(note, " \t\n")
+					filteredNotes = append(filteredNotes, note)
+				}
 
-				notes := strings.Join(m.Notes, ", ")
+				notes := strings.Join(filteredNotes, ", ")
 				if notes != "" {
 					catMsg = append(catMsg, "("+notes+")")
 				}

@@ -14,7 +14,7 @@ var (
 	dbConnectionOnce sync.Once
 )
 
-func NewDatabaseConnection() (*gorm.DB, error) {
+func GetDatabaseConnection() (*gorm.DB, error) {
 	var e error
 	dbConnectionOnce.Do(func() {
 		log.Println("connecting to database")

@@ -12,7 +12,7 @@ var (
 	telegramApiOnce sync.Once
 )
 
-func NewTelegramBotApi() (*telegrambotapi.TelegramBotApi, error) {
+func GetTelegramBotApi() (*telegrambotapi.TelegramBotApi, error) {
 	var e error
 	telegramApiOnce.Do(func() {
 		log.Println("connecting to telegram api")

@@ -12,6 +12,9 @@ var (
 	ErrSubscriptionCreation = errors.New("failed to create subscription")
 	ErrScheduleSubscription = errors.New("could not schedule subscription")
 	ErrUnsubscribeFailed    = errors.New("unsubscribe failed")
+
+	ErrSubscriptionNotFound    = errors.New("subscription not found")
+	ErrSubscriptionFetchFailed = errors.New("subscription fetch failed")
 )
 
 type SubscriberService struct {
@@ -38,6 +41,17 @@ func (ss SubscriberService) Subscribe(chatID int64, mensaID int, pushHours, push
 		return sub, errors.Join(ErrScheduleSubscription, err)
 	}
 	return sub, err
+}
+
+func (ss SubscriberService) GetSubscription(id uint) (db.Subscriber, error) {
+	sub, found, err := ss.repo.FindSubscriberById(id)
+	if err != nil {
+		return sub, errors.Join(ErrSubscriptionFetchFailed, err)
+	}
+	if !found {
+		return sub, ErrSubscriptionNotFound
+	}
+	return sub, nil
 }
 
 func (ss SubscriberService) Unsubscribe(chatID int64, mensaID int) error {
