@@ -34,6 +34,8 @@ func (scheduler *SubscriberScheduler) SetAction(action SubscriberScheduleAction)
 }
 
 func (scheduler *SubscriberScheduler) InsertJob(subscriber db.Subscriber) error {
+  scheduler.RemoveJob(subscriber.ID)
+  
 	time := fmt.Sprintf("%02d:%02d", subscriber.Push.Hours, subscriber.Push.Minutes)
 	id := subscriber.ID
 	job, err := scheduler.scheduler.Every(1).Day().At(time).Do(func() {
@@ -53,6 +55,7 @@ func (scheduler *SubscriberScheduler) InsertJob(subscriber db.Subscriber) error 
 }
 
 func (scheduler *SubscriberScheduler) RemoveJob(id uint) {
-	job := scheduler.scheduledJobs[id]
-	scheduler.scheduler.Remove(job)
+	if job, ok := scheduler.scheduledJobs[id]; ok {
+		scheduler.scheduler.Remove(job)
+	}
 }

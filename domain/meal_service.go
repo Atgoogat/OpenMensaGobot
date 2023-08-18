@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	MealLimitPerMessage = 20
+	MealLimitPerMessage = 50 
 )
 
 var (
