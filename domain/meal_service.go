@@ -65,6 +65,7 @@ func mealsToMsg(meals []openmensa.CanteenMeal, priceType openmensa.PriceType) st
 	categoriesDone := make(map[string]struct{})
 
 	var msg []string
+  firstCategory := true
 
 	// process categorys in order of meals
 	for _, meal := range meals {
@@ -73,7 +74,11 @@ func mealsToMsg(meals []openmensa.CanteenMeal, priceType openmensa.PriceType) st
 			meals := categories[category]
 
 			var catMsg []string
+      if !firstCategory {
+        catMsg = append(catMsg, "") 
+      }
 			catMsg = append(catMsg, "<b>"+category+"</b>")
+      firstCategory = false 
 
 			for _, m := range meals {
 				catMsg = append(catMsg, "", m.Name)
