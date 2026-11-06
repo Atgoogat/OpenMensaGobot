@@ -60,7 +60,7 @@ func (ss SubscriberService) Unsubscribe(chatID int64, mensaID int) error {
 		return errors.Join(ErrUnsubscribeFailed, err)
 	}
 	if !found {
-		return nil
+		return ErrSubscriptionNotFound
 	}
 	if err := ss.repo.DeleteSubscriberByID(sub.ID); err != nil {
 		return errors.Join(ErrUnsubscribeFailed, err)

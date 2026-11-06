@@ -17,6 +17,7 @@ var (
 	ErrCommandNotDefined = errors.New("this command is not defined")
 
 	ErrSubUnexpectedFormat      = errors.New("unexpected argument format. Example: /sub 1719 09:00 students")
+	ErrUnsubUnexpectedFormat    = errors.New("unexpected argument format. Example: /unsub 1719")
 	ErrUnsubAllUnexpectedFormat = errors.New("unexpected argument format. Example: /unsuball")
 	ErrTodayUnexpectedFormat    = errors.New("unexpected argument format. Example: /today 1719")
 )
@@ -48,6 +49,8 @@ func (cs CliService) ParseAndExecuteCommand(msg telegrambotapi.TelegramMessage) 
 		return cs.parseAndExecuteSub(msg)
 	} else if msg.Text == "/unsuball" {
 		return cs.parseAndExecuteUnsubAll(msg)
+	} else if msg.Text == "/unsub" || strings.HasPrefix(msg.Text, "/unsub ") {
+		return cs.parseAndExecuteUnsub(msg)
 	} else if strings.HasPrefix(msg.Text, "/today") {
 		return cs.parseAndExecuteToday(msg)
 	}
@@ -76,6 +79,30 @@ func (cs CliService) parseAndExecuteSub(msg telegrambotapi.TelegramMessage) (str
 		return "", err
 	}
 	return fmt.Sprintf("subscribed to mensa %d. next update on %02d:%02d", sub.MensaID, sub.Push.Hours, sub.Push.Minutes), nil
+}
+
+var unsubRegex = regexp.MustCompile(`^/unsub \d{1,10}$`)
+
+// Parse format: /unsub [mensaID]
+func (cs CliService) parseAndExecuteUnsub(msg telegrambotapi.TelegramMessage) (string, error) {
+	if !unsubRegex.MatchString(msg.Text) {
+		return "", ErrUnsubUnexpectedFormat
+	}
+
+	var mensaID int
+	n, err := fmt.Sscanf(msg.Text, "/unsub %d", &mensaID)
+	if n != 1 || err != nil {
+		return "", errors.Join(ErrUnsubUnexpectedFormat, err)
+	}
+
+	err = cs.subscriberService.Unsubscribe(msg.ChatID, mensaID)
+	if errors.Is(err, ErrSubscriptionNotFound) {
+		return fmt.Sprintf("you are not subscribed to mensa %d", mensaID), nil
+	}
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("unsubscribed from mensa %d", mensaID), nil
 }
 
 func (cs CliService) parseAndExecuteUnsubAll(msg telegrambotapi.TelegramMessage) (string, error) {
