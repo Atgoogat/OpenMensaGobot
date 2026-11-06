@@ -1,4 +1,4 @@
-FROM golang:1.20 as builder
+FROM golang:1.26 AS builder
 
 WORKDIR /app
 
@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 go build -o atgo-openmensarobot cmd/main.go
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o atgo-openmensarobot cmd/main.go
 
 FROM scratch
 

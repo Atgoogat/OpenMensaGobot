@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"errors"
 	"log"
 	"time"
 
@@ -26,7 +27,7 @@ func (ps PushService) SendPushUpdate(id uint) error {
 	sub, err := ps.subscriberService.GetSubscription(id)
 	if err != nil {
 		log.Printf("error while getting subscription: %v", err)
-		if err == ErrSubscriptionNotFound {
+		if errors.Is(err, ErrSubscriptionNotFound) {
 			// return error so that the subscription is removed
 			return err
 		}
@@ -34,12 +35,25 @@ func (ps PushService) SendPushUpdate(id uint) error {
 	}
 
 	mealsMsg, err := ps.mealService.GetFormatedMeals(sub.MensaID, time.Now(), sub.PriceType)
-	if err != nil {
-		log.Printf("error while pushing mensa update: %v", err)
-		_ = ps.telegramApi.SendHtmlMessage(sub.ChatID, "error while getting todays plan")
+	if errors.Is(err, ErrNoMeals) {
+		// mensa closed (weekend, holiday) - nothing to push
+		log.Printf("no meals for mensa %d today, skipping push for %d", sub.MensaID, id)
 		return nil
 	}
+	if err != nil {
+		log.Printf("error while pushing mensa update: %v", err)
+		err = ps.telegramApi.SendHtmlMessage(sub.ChatID, "error while getting todays plan")
+	} else {
+		err = ps.telegramApi.SendHtmlMessage(sub.ChatID, mealsMsg)
+	}
 
-	_ = ps.telegramApi.SendHtmlMessage(sub.ChatID, mealsMsg)
+	if telegrambotapi.IsChatUnreachable(err) {
+		log.Printf("chat %d is unreachable, removing subscription %d", sub.ChatID, id)
+		if delErr := ps.subscriberService.repo.DeleteSubscriberByID(id); delErr != nil {
+			log.Printf("could not delete subscription %d: %v", id, delErr)
+		}
+		// return error so that the job is removed
+		return err
+	}
 	return nil
 }
