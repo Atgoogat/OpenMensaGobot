@@ -26,7 +26,7 @@ type OpenmensaApi struct {
 func NewOpenmensaApi(endpoint string) OpenmensaApi {
 	return OpenmensaApi{
 		endpoint: endpoint,
-		client:   &http.Client{},
+		client:   &http.Client{Timeout: 15 * time.Second},
 	}
 }
 
@@ -37,8 +37,8 @@ func makeJsonRequest[T interface{}](client *http.Client, req *http.Request, data
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode != 200 {
-		return ErrExpectedStatusCodeOk
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("%w: got %d", ErrExpectedStatusCodeOk, res.StatusCode)
 	}
 
 	body, err := io.ReadAll(res.Body)

@@ -3,6 +3,7 @@ package domain
 import (
 	"errors"
 	"fmt"
+	"html"
 	"log"
 	"strings"
 	"time"
@@ -11,11 +12,12 @@ import (
 )
 
 const (
-	MealLimitPerMessage = 50 
+	MealLimitPerMessage = 50
 )
 
 var (
 	ErrCouldNotFetch = errors.New("could not fetch meals from openmensa api")
+	ErrNoMeals       = errors.New("no meals found for this day (closed or no menu published)")
 )
 
 type MealService struct {
@@ -38,6 +40,9 @@ func (s MealService) GetFormatedMeals(mensaID int, date time.Time, priceType ope
 	meals, err := s.openmensaApi.ListMealsForADay(mensaID, date, 1, MealLimitPerMessage)
 	if err != nil {
 		return "", errors.Join(ErrCouldNotFetch, err)
+	}
+	if len(meals) == 0 {
+		return "", ErrNoMeals
 	}
 
 	t := mealsToMsg(meals, priceType)
@@ -65,7 +70,6 @@ func mealsToMsg(meals []openmensa.CanteenMeal, priceType openmensa.PriceType) st
 	categoriesDone := make(map[string]struct{})
 
 	var msg []string
-  firstCategory := true
 
 	// process categorys in order of meals
 	for _, meal := range meals {
@@ -74,18 +78,19 @@ func mealsToMsg(meals []openmensa.CanteenMeal, priceType openmensa.PriceType) st
 			meals := categories[category]
 
 			var catMsg []string
-      if !firstCategory {
-        catMsg = append(catMsg, "") 
-      }
-			catMsg = append(catMsg, "<b>"+category+"</b>")
-      firstCategory = false 
+			if len(msg) > 0 {
+				catMsg = append(catMsg, "")
+			}
+			catMsg = append(catMsg, "<b>"+html.EscapeString(category)+"</b>")
 
 			for _, m := range meals {
-				catMsg = append(catMsg, "", m.Name)
+				catMsg = append(catMsg, "", html.EscapeString(m.Name))
 				var filteredNotes []string
 				for _, note := range m.Notes {
-					note = strings.Trim(note, " \t\n")
-					filteredNotes = append(filteredNotes, note)
+					note = strings.TrimSpace(note)
+					if note != "" {
+						filteredNotes = append(filteredNotes, html.EscapeString(note))
+					}
 				}
 
 				notes := strings.Join(filteredNotes, ", ")

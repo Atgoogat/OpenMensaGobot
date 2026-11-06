@@ -69,7 +69,7 @@ func firstOrDefault[T any](input []T) (ret T) {
 
 func (repo SubscriberRepository) FindSubscriberById(id uint) (Subscriber, bool, error) {
 	var sub []Subscriber
-	result := repo.db.Find(&sub, id).Limit(1)
+	result := repo.db.Limit(1).Find(&sub, id)
 	return firstOrDefault(sub), result.RowsAffected > 0, result.Error
 }
 
@@ -79,15 +79,21 @@ func (repo SubscriberRepository) FindSubscriberByChatID(chatID int64) (Subscribe
 	return sub, result.Error
 }
 
+func (repo SubscriberRepository) FindSubscribersByChatID(chatID int64) ([]Subscriber, error) {
+	var subs []Subscriber
+	result := repo.db.Find(&subs, "chat_id = ?", chatID)
+	return subs, result.Error
+}
+
 func (repo SubscriberRepository) FindSubscriberByChatIDAndMensaID(chatID int64, mensaID int) (Subscriber, bool, error) {
 	var sub []Subscriber
-	result := repo.db.Find(&sub, "chat_id = ? AND mensa_id = ?", chatID, mensaID).Limit(1)
+	result := repo.db.Limit(1).Find(&sub, "chat_id = ? AND mensa_id = ?", chatID, mensaID)
 	return firstOrDefault(sub), result.RowsAffected > 0, result.Error
 }
 
 func (repo SubscriberRepository) ExistsSubscriberWithChatIDAndMensaID(chatID int64, mensaID int) (bool, error) {
 	var sub []Subscriber
-	result := repo.db.Find(&sub, "chat_id = ? AND mensa_id = ?", chatID, mensaID).Limit(1)
+	result := repo.db.Limit(1).Find(&sub, "chat_id = ? AND mensa_id = ?", chatID, mensaID)
 	return result.RowsAffected > 0, result.Error
 }
 

@@ -55,17 +55,30 @@ func (ss SubscriberService) GetSubscription(id uint) (db.Subscriber, error) {
 }
 
 func (ss SubscriberService) Unsubscribe(chatID int64, mensaID int) error {
-	err := ss.repo.DeleteSubscriberByChatIDAndMensaID(chatID, mensaID)
+	sub, found, err := ss.repo.FindSubscriberByChatIDAndMensaID(chatID, mensaID)
 	if err != nil {
-		return errors.Join(ErrUnsubscribeFailed)
+		return errors.Join(ErrUnsubscribeFailed, err)
 	}
+	if !found {
+		return nil
+	}
+	if err := ss.repo.DeleteSubscriberByID(sub.ID); err != nil {
+		return errors.Join(ErrUnsubscribeFailed, err)
+	}
+	ss.scheduler.RemoveJob(sub.ID)
 	return nil
 }
 
 func (ss SubscriberService) UnsubscribeChat(chatID int64) error {
-	err := ss.repo.DeleteSubscriberByChatID(chatID)
+	subs, err := ss.repo.FindSubscribersByChatID(chatID)
 	if err != nil {
-		return errors.Join(ErrUnsubscribeFailed)
+		return errors.Join(ErrUnsubscribeFailed, err)
+	}
+	if err := ss.repo.DeleteSubscriberByChatID(chatID); err != nil {
+		return errors.Join(ErrUnsubscribeFailed, err)
+	}
+	for _, sub := range subs {
+		ss.scheduler.RemoveJob(sub.ID)
 	}
 	return nil
 }

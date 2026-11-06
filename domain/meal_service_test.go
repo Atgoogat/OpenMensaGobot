@@ -65,3 +65,16 @@ Nudeln
 Keine Preisinformation`, msg)
 
 }
+
+func TestFormatEscapesHtml(t *testing.T) {
+	msg := mealsToMsg([]openmensa.CanteenMeal{{
+		Name:     "Pommes & Mayo <vegan>",
+		Notes:    []string{" Allergene: a<b ", "  "},
+		Category: "Snacks & Co",
+	}}, openmensa.PRICE_NONE)
+
+	assert.Equal(t, `<b>Snacks &amp; Co</b>
+
+Pommes &amp; Mayo &lt;vegan&gt;
+(Allergene: a&lt;b)`, msg)
+}

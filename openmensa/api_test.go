@@ -68,7 +68,7 @@ func TestListCanteenDays_InvalidId(t *testing.T) {
 	_, err := api.ListDaysOfCanteen(-1, 1, 100)
 	assert.NotNil(t, err)
 
-	assert.Equal(t, ErrExpectedStatusCodeOk, err)
+	assert.ErrorIs(t, err, ErrExpectedStatusCodeOk)
 }
 
 func TestListMeals(t *testing.T) {
